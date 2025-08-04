@@ -1,0 +1,12 @@
+{# templates/components/flash_popup.html #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div id="flash-popup-container">
+    {% for category, message in messages %}
+    <div class="flash-popup flash-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}

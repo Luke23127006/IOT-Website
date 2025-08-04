@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>IoT Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main content -->
+    <div class="main-content">
+        {% include "components/flash_popup.html" %}
+        <div class="container">
+            <header>
+                <h1>Gas Monitoring Dashboard</h1>
+            </header>
+
+            <div class="controls">
+                <button id="toggle-led">Toggle LED</button>
+                <button id="toggle-buzzer">Toggle Buzzer</button>
+            </div>
+
+            <div class="status">
+                <h2>Gas Concentration: <span id="gas-value">--</span> ppm</h2>
+                <canvas id="gas-chart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS script -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+
+</html>

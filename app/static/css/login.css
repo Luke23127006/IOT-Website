@@ -1,0 +1,126 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background-color: #d8f0fa;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: rgba(100, 150, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 50px 60px; /* tăng khoảng cách bên trong */
+  box-shadow: 0 0 30px rgba(0, 0, 50, 0.15);
+  width: 520px; /* tăng chiều rộng */
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #0033aa;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-bottom: 2px solid #0033aa;
+  background: transparent;
+  color: #0033aa;
+  font-size: 14px;
+  outline: none;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background-color: #2a55e5;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #1a3db8;
+}
+
+#flash-popup-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none; /* để không ảnh hưởng layout */
+}
+
+.flash-popup {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0;
+  position: relative;
+  animation: slideDown 0.5s ease-out forwards, fadeOut 0.4s ease-out 3s forwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 8px;
+  min-width: 280px;
+  text-align: center;
+}
+
+/* Màu */
+.flash-success {
+  background-color: #28a745;
+}
+
+.flash-danger {
+  background-color: #dc3545;
+}
+
+.flash-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+/* Animation từ trên xuống */
+@keyframes slideDown {
+  from {
+    top: -40px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+/* Tự động biến mất */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}

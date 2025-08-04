@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+
+    <!-- Bootstrap CSS (chỉ để hỗ trợ alert đẹp) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+
+<body>
+    {% include "components/flash_popup.html" %}
+    <div class="container">
+
+        <div class="login-box">
+            <h2>Login</h2>
+            <form method="POST" action="{{ url_for('main.login') }}">
+                <input type="text" name="username" placeholder="Username" class="input-field" required />
+                <input type="password" name="password" placeholder="Password" class="input-field" required />
+                <div class="button-group">
+                    <button type="submit" class="btn">Login</button>
+                    <button type="button" class="btn" id="go-signup">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign-up redirect -->
+    <script>
+        document.getElementById("go-signup").addEventListener("click", function () {
+            window.location.href = "{{ url_for('main.signup') }}";
+        });
+    </script>
+</body>
+
+</html>

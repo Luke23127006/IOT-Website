@@ -1,0 +1,29 @@
+<!-- sidebar.html hoặc đặt trực tiếp trong dashboard.html -->
+<div class="sidebar">
+    <h2 class="brand">SafeGas</h2>
+
+    <ul class="nav-list">
+        <li class="{% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+            <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+        </li>
+        <li class="{% if request.endpoint == 'main.alert_history' %}active{% endif %}">
+            <a href="{{ url_for('main.alert_history') }}">Alert History</a>
+        </li>
+        <li class="{% if request.endpoint == 'main.configuration' %}active{% endif %}">
+            <a href="{{ url_for('main.configuration') }}">Configuration</a>
+        </li>
+        <li class="{% if request.endpoint == 'main.analysis' %}active{% endif %}">
+            <a href="{{ url_for('main.analysis') }}">Analysis & Prediction</a>
+        </li>
+        <li class="{% if request.endpoint == 'main.account' %}active{% endif %}">
+            <a href="{{ url_for('main.account') }}">Account</a>
+        </li>
+    </ul>
+
+
+    <div class="logout-section">
+        <form action="{{ url_for('main.logout') }}" method="POST">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</div>
