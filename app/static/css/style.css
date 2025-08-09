@@ -298,3 +298,42 @@ button:hover {
 input::placeholder {
   color: #aaa;
 }
+
+/* ==================== Account Page ==================== */
+
+.password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.password-wrap input {
+  width: 100%;
+  padding-right: 44px; /* room for the eye button */
+}
+
+.toggle-pass {
+  position: absolute;
+  right: -10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  padding: 0px;
+}
+.toggle-pass:hover {
+  background: transparent; /* disable hover effect */
+}
+
+/* Hide browser's built-in eye icon in Edge/IE */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* Hide WebKit (Chrome/Safari) password reveal icons if they appear */
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none;
+  pointer-events: none;
+}

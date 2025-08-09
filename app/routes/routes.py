@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app import mongo
 from bson import ObjectId
 from ..utils.decorators import login_required
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 main = Blueprint("main", __name__)
@@ -28,19 +29,42 @@ def dashboard():
 @login_required
 def account():
     user = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])})
-
     if request.method == "POST":
-        new_username = request.form.get("username")
-        new_email = request.form.get("email")
+        new_username = request.form.get("username", "").strip()
+        new_email = request.form.get("email", "").strip()
 
-        if new_username:
-            mongo.db.users.update_one({"_id": user["_id"]}, {"$set": {"username": new_username}})
-            session["username"] = new_username
-            flash("Cập nhật tên người dùng thành công!", "success")
+        # --- update name/email ---
+        updates = {}
+        if new_username and new_username != user.get("username"):
+            updates["username"] = new_username
+        if new_email and new_email != user.get("email"):
+            updates["email"] = new_email
+        if updates:
+            mongo.db.users.update_one({"_id": user["_id"]}, {"$set": updates})
+            if "username" in updates:
+                session["username"] = updates["username"]
+            flash("Profile updated successfully.", "success")
 
-        if new_email:
-            mongo.db.users.update_one({"_id": user["_id"]}, {"$set": {"email": new_email}})
-            flash("Cập nhật email thành công!", "success")
+        # --- change password (optional) ---
+        current_password = request.form.get("current_password") or ""
+        new_password = request.form.get("new_password") or ""
+        confirm_password = request.form.get("confirm_password") or ""
+
+        if new_password or confirm_password or current_password:
+            if not current_password:
+                flash("Please enter your current password to change it.", "danger")
+            elif not check_password_hash(user.get("password", ""), current_password):
+                flash("Current password is incorrect.", "danger")
+            elif len(new_password) < 3:
+                flash("New password must be at least 6 characters.", "danger")
+            elif new_password != confirm_password:
+                flash("New password and confirmation do not match.", "danger")
+            elif new_password == current_password:
+                flash("New password cannot be the same as current password.", "danger")
+            else:
+                hashed = generate_password_hash(new_password)
+                mongo.db.users.update_one({"_id": user["_id"]}, {"$set": {"password": hashed}})
+                flash("Password changed successfully.", "success")
 
         return redirect(url_for("main.account"))
 

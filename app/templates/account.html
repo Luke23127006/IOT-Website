@@ -18,26 +18,73 @@
         <div class="container">
             <h1 class="account-title">User Account Settings</h1>
 
-            <form class="account-form">
+            <form class="account-form" method="POST" action="{{ url_for('main.account') }}">
                 <h3>User Account Settings</h3>
 
                 <div class="form-row">
-                    <label for="name">Name</label>
-                    <p class="form-static">Luan Tran</p>
+                    <label for="username">Name</label>
+                    <input type="text" id="username" name="username" value="{{ user['username'] }}" required />
                 </div>
 
                 <div class="form-row">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="luan@gmail.com" required />
+                    <input type="email" id="email" name="email" value="{{ user['email'] }}" required />
                 </div>
 
                 <div class="form-row">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" value="********" required />
+                    <label for="current_password">Current Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="current_password" name="current_password"
+                            placeholder="Enter current password" />
+                        <button type="button" class="toggle-pass" data-target="current_password"
+                            aria-label="Show/Hide password">
+                            <span class="icon-eye">🙈</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="new_password">New Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="new_password" name="new_password" placeholder="New password" />
+                        <button type="button" class="toggle-pass" data-target="new_password"
+                            aria-label="Show/Hide password">
+                            🙈
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="confirm_password" name="confirm_password"
+                            placeholder="Confirm new password" />
+                        <button type="button" class="toggle-pass" data-target="confirm_password"
+                            aria-label="Show/Hide password">
+                            🙈
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="save-btn">Save</button>
             </form>
+
+            <script>
+                document.querySelectorAll('.toggle-pass').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetId = btn.getAttribute('data-target');
+                        const input = document.getElementById(targetId);
+
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            btn.textContent = '🙉'; // open eye
+                        } else {
+                            input.type = 'password';
+                            btn.textContent = '🙈'; // closed eye
+                        }
+                    });
+                });
+            </script>
         </div>
     </div>
 </body>
