@@ -1,0 +1,21 @@
+<!-- Floating chat launcher -->
+<button class="chat-launcher" id="chat-launcher" aria-label="Open chat">💬</button>
+
+<!-- Popup chat window -->
+<div class="chatbox" id="chatbox" aria-hidden="true">
+    <div class="chatbox-header">
+        <span>Chatbot</span>
+        <button class="chatbox-close" id="chat-close" aria-label="Close">×</button>
+    </div>
+
+    <div class="chatbox-body" id="chat-body">
+        <div class="bubble bot">Hi</div>
+    </div>
+
+    <form class="chatbox-input" id="chat-form">
+        <input id="chat-text" type="text" placeholder="Type a message…" autocomplete="off" />
+        <button type="submit" aria-label="Send">➤</button>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>

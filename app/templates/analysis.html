@@ -9,31 +9,38 @@
 </head>
 
 <body>
-    <!-- Sidebar -->
     {% include "components/sidebar.html" %}
 
-    <!-- Main content -->
     <div class="main-content">
         {% include "components/flash_popup.html" %}
+        {% include "components/chatbot.html" %}
+
         <div class="container">
-            <header>
-                <h1>Gas Monitoring Dashboard</h1>
-            </header>
+            <h1 class="page-title">Analysis & Prediction</h1>
 
-            <div class="controls">
-                <button id="toggle-led">Toggle LED</button>
-                <button id="toggle-buzzer">Toggle Buzzer</button>
-            </div>
+            <div class="page-grid">
+                <!-- LEFT: insights + chart -->
+                <section class="insights">
+                    <h3 class="section-title">Prediction Result</h3>
+                    <p class="muted">
+                        It is predicted that the gas concentration will rise significantly at <b>4:00 PM</b> today.
+                    </p>
 
-            <div class="status">
-                <h2>Gas Concentration: <span id="gas-value">--</span> ppm</h2>
-                <canvas id="gas-chart" width="400" height="200"></canvas>
+                    <h3 class="section-title">Risk Level</h3>
+                    <p class="risk-high">❗ High <span class="muted">(over 200 ppm within the next 2 hours)</span></p>
+
+                    <h3 class="section-title">Prediction Chart</h3>
+                    <div class="card">
+                        <canvas id="pred-chart" height="220"></canvas>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
 
     <!-- JS script -->
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src=" {{ url_for('static', filename='js/analysis.js' ) }}">
+    </script>
 </body>
 
 </html>

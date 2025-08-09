@@ -15,12 +15,11 @@
     <!-- Main content -->
     <div class="main-content">
         {% include "components/flash_popup.html" %}
+        {% include "components/chatbot.html" %}
         <div class="container">
-            <h1 class="account-title">User Account Settings</h1>
+            <h1 class="page-title">User Account Settings</h1>
 
-            <form class="account-form" method="POST" action="{{ url_for('main.account') }}">
-                <h3>User Account Settings</h3>
-
+            <form class="page-form" method="POST" action="{{ url_for('main.account') }}">
                 <div class="form-row">
                     <label for="username">Name</label>
                     <input type="text" id="username" name="username" value="{{ user['username'] }}" required />

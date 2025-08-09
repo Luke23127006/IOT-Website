@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from app.extensions import mongo
+from app.models import device as device_model
 
 def create_app():
     # Load biến môi trường từ .env
@@ -18,7 +19,6 @@ def create_app():
 
     # Cấu hình MongoDB URI từ file .env
     app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-
     # Khởi tạo kết nối MongoDB
     mongo.init_app(app)
 

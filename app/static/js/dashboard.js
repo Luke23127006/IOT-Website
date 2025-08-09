@@ -10,6 +10,8 @@ const gasChart = new Chart(ctx, {
             data: [],
             borderColor: 'red',
             borderWidth: 2,
+            tension: 0.35,
+            pointRadius: 3,
             fill: false
         }]
     },
@@ -38,11 +40,3 @@ setInterval(() => {
 
     gasChart.update();
 }, 2000);
-
-document.getElementById("toggle-led").addEventListener("click", () => {
-    fetch('/toggle_led', { method: 'POST' });
-});
-
-document.getElementById("toggle-buzzer").addEventListener("click", () => {
-    fetch('/toggle_buzzer', { method: 'POST' });
-});

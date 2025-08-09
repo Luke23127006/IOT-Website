@@ -15,15 +15,9 @@
     <!-- Main content -->
     <div class="main-content">
         {% include "components/flash_popup.html" %}
+        {% include "components/chatbot.html" %}
         <div class="container">
-            <header>
-                <h1>Gas Monitoring Dashboard</h1>
-            </header>
-
-            <div class="controls">
-                <button id="toggle-led">Toggle LED</button>
-                <button id="toggle-buzzer">Toggle Buzzer</button>
-            </div>
+            <h1 class="page-title">Dashboard</h1>
 
             <div class="status">
                 <h2>Gas Concentration: <span id="gas-value">--</span> ppm</h2>

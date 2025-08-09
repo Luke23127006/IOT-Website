@@ -9,31 +9,85 @@
 </head>
 
 <body>
-    <!-- Sidebar -->
     {% include "components/sidebar.html" %}
 
-    <!-- Main content -->
     <div class="main-content">
         {% include "components/flash_popup.html" %}
+        {% include "components/chatbot.html" %}
         <div class="container">
-            <header>
-                <h1>Gas Monitoring Dashboard</h1>
-            </header>
+            <h1 class="page-title">Configuration</h1>
 
-            <div class="controls">
-                <button id="toggle-led">Toggle LED</button>
-                <button id="toggle-buzzer">Toggle Buzzer</button>
-            </div>
+            <form class="page-form" method="POST" action="{{ url_for('main.configuration') }}">
+                <!-- Title already above -->
 
-            <div class="status">
-                <h2>Gas Concentration: <span id="gas-value">--</span> ppm</h2>
-                <canvas id="gas-chart" width="400" height="200"></canvas>
-            </div>
+                <!-- Device ID (readonly) -->
+                <div class="form-row">
+                    <label>Device ID</label>
+                    <input type="text" type="text" name="device_id"
+                        value="{{ device.device_id if device else 'ESP32-001' }}" readonly>
+                </div>
+
+                <!-- Name -->
+                <div class="form-row">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Name"
+                        value="{{ device.device_name if device else '' }}">
+                </div>
+
+                <!-- Warning Threshold -->
+                <div class="form-row">
+                    <label for="warn">Warning Threshold</label>
+                    <div class="with-unit">
+                        <input type="number" id="warn" name="warning_threshold" step="1" min="0" placeholder="Number"
+                            value="{{ device.warning_threshold if device else '' }}">
+                        <span class="unit">pm</span>
+                    </div>
+                </div>
+
+                <!-- Danger Threshold -->
+                <div class="form-row">
+                    <label for="danger">Danger Threshold</label>
+                    <div class="with-unit">
+                        <input type="number" id="danger" name="danger_threshold" step="1" min="0" placeholder="Number"
+                            value="{{ device.danger_threshold if device else '' }}">
+                        <span class="unit">pm</span>
+                    </div>
+                </div>
+
+                <!-- Sound -->
+                <div class="form-row">
+                    <label for="sound">Sound</label>
+                    <label class="switch">
+                        <input type="checkbox" id="sound" name="sound" {% if device and device.sound %}checked{% endif
+                            %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Yellow LED -->
+                <div class="form-row">
+                    <label for="yellow_led">Yellow LED</label>
+                    <label class="switch">
+                        <input type="checkbox" id="yellow_led" name="yellow_led" {% if device and device.yellow_led
+                            %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Red LED -->
+                <div class="form-row">
+                    <label for="red_led">Red LED</label>
+                    <label class="switch">
+                        <input type="checkbox" id="red_led" name="red_led" {% if device and device.red_led %}checked{%
+                            endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="save-btn">Save</button>
+            </form>
         </div>
     </div>
-
-    <!-- JS script -->
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 
 </html>

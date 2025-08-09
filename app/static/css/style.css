@@ -198,20 +198,69 @@ button:hover {
 }
 
 /* ==================== Account Page ==================== */
-.account-title {
-  text-align: center;
-  color: #001bff;
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 30px;
+/* Unified two‑column form like Account */
+.page-form {
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 220px minmax(280px, 420px);
+  gap: 18px 28px;
+  align-items: center;
+  margin-top: 8px;
+}
+.page-form .form-row {
+  display: contents;
 }
 
-.account-form {
-  background: none;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: auto;
+/* Underline inputs (use on both pages) */
+.page-form input[type="text"],
+.page-form input[type="email"],
+.page-form input[type="number"],
+.page-form input[type="password"] {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid #242a6b;
+  padding: 8px 6px 6px;
+  font-size: 18px;
+  outline: none;
+  width: 100%;
+}
+.page-form input:focus {
+  border-bottom-color: #4455ff;
+}
+
+/* Unit suffix wrapper */
+.page-form .with-unit {
+  position: relative;
+}
+.page-form .with-unit .line-input,
+.page-form .with-unit input {
+  padding-right: 48px;
+}
+.page-form .with-unit .unit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+/* Save button aligned with inputs */
+.page-form .save-btn {
+  grid-column: 2 / 3;
+  justify-self: start;
+  margin-top: 10px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  background: #3d55ff;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(61, 85, 255, 0.25);
+  cursor: pointer;
+}
+.page-form .save-btn:active {
+  transform: translateY(1px);
 }
 
 .account-form h3 {
@@ -257,14 +306,6 @@ button:hover {
 
 .save-btn:hover {
   background-color: #2a43cc;
-}
-
-.account-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 500px;
-  margin: auto;
 }
 
 .form-row {
@@ -336,4 +377,303 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   visibility: hidden;
   display: none;
   pointer-events: none;
+}
+
+/* ===== Configuration Page ===== */
+.page-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1737d1; /* deep blue like mock */
+  margin: 14px 0 28px;
+}
+.section-title {
+  color: #2f44db;
+  margin: 0 0 18px;
+  font-weight: 700;
+}
+
+.config-form {
+  margin-top: 8px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(280px, 420px);
+  gap: 18px 28px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* input + unit (pm) */
+.with-unit {
+  position: relative;
+}
+
+.with-unit .unit {
+  position: absolute;
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+/* iOS-like switch */
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  display: inline-block;
+}
+.switch input {
+  display: none;
+}
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #cbd5e1;
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: 0.25s ease;
+}
+.switch input:checked + .slider {
+  background: #4f66ff;
+}
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* bigger Save like mock */
+.save-btn.lg {
+  margin-top: 10px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  background: #3d55ff;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(61, 85, 255, 0.25);
+  cursor: pointer;
+}
+.save-btn.lg:active {
+  transform: translateY(1px);
+}
+
+/* responsive */
+@media (max-width: 780px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-grid > label {
+    margin-top: 8px;
+  }
+}
+
+/* Make inputs size include padding */
+.page-form input {
+  box-sizing: border-box;
+}
+
+/* Ensure with-unit inputs leave room for the unit suffix */
+.page-form .with-unit input[type="text"],
+.page-form .with-unit input[type="number"] {
+  padding-right: 56px; /* give space for “pm” */
+}
+
+/* Position the unit nicely and ignore clicks */
+.page-form .with-unit .unit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  pointer-events: none;
+}
+
+/* ====== Analysis page layout ====== */
+.page-grid {
+  display: grid;
+  grid-template-columns: minmax(520px, 1fr) 360px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Reusable card */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+}
+
+/* Small helper text */
+.muted {
+  color: #4b5563;
+}
+
+/* Risk labels */
+.risk-high {
+  color: #b91c1c;
+  font-weight: 700;
+}
+.risk-medium {
+  color: #b45309;
+  font-weight: 700;
+}
+.risk-low {
+  color: #047857;
+  font-weight: 700;
+}
+
+/* ====== Chatbot ====== */
+/* ----- Chat popup ----- */
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  background: #3d5afe;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(61, 90, 254, 0.35);
+  z-index: 1000;
+}
+.chat-launcher:hover {
+  background: #2a43cc;
+}
+
+/* container */
+.chatbox {
+  position: fixed;
+  right: 24px;
+  bottom: 92px; /* sits above the FAB */
+  width: 340px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: #e9f1ff;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1000;
+}
+.chatbox.open {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* header */
+.chatbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 14px;
+  background: #3555ff;
+  color: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  font-weight: 700;
+}
+.chatbox-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 22px; /* smaller icon/text */
+  padding: 2px 6px; /* less padding */
+  cursor: pointer;
+  line-height: 1; /* tighter vertical space */
+}
+
+/* body */
+.chatbox-body {
+  padding: 14px;
+  overflow: auto;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.bubble {
+  padding: 10px 12px;
+  border-radius: 14px;
+  max-width: 80%;
+  font-size: 14px;
+}
+.bubble.bot {
+  background: #ffffff;
+  align-self: flex-start;
+}
+.bubble.user {
+  background: #dbe3ff;
+  align-self: flex-end;
+}
+
+/* input row */
+.chatbox-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: #f5f8ff;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+.chatbox-input input {
+  flex: 1;
+  border: 0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+.chatbox-input button {
+  border: 0;
+  padding: 0 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #3d5afe;
+  color: #fff;
+  font-size: 18px;
+}
+.chatbox-input button:hover {
+  background: #2a43cc;
+}
+
+/* (optional) small screens */
+@media (max-width: 480px) {
+  .chatbox {
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+  .chat-launcher {
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 980px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+  .chatbot {
+    height: 420px;
+  }
 }
