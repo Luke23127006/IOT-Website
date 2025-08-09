@@ -19,7 +19,7 @@
 
         <div class="login-box">
             <h2>Login</h2>
-            <form method="POST" action="{{ url_for('main.login') }}">
+            <form method="POST" action="{{ url_for('auth.login') }}">
                 <input type="text" name="username" placeholder="Username" class="input-field" required />
                 <input type="password" name="password" placeholder="Password" class="input-field" required />
                 <div class="button-group">
@@ -33,7 +33,7 @@
     <!-- Sign-up redirect -->
     <script>
         document.getElementById("go-signup").addEventListener("click", function () {
-            window.location.href = "{{ url_for('main.signup') }}";
+            window.location.href = "{{ url_for('auth.signup') }}";
         });
     </script>
 </body>

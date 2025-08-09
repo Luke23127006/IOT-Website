@@ -16,24 +16,30 @@
     <div class="main-content">
         {% include "components/flash_popup.html" %}
         <div class="container">
-            <header>
-                <h1>Gas Monitoring Dashboard</h1>
-            </header>
+            <h1 class="account-title">User Account Settings</h1>
 
-            <div class="controls">
-                <button id="toggle-led">Toggle LED</button>
-                <button id="toggle-buzzer">Toggle Buzzer</button>
-            </div>
+            <form class="account-form">
+                <h3>User Account Settings</h3>
 
-            <div class="status">
-                <h2>Gas Concentration: <span id="gas-value">--</span> ppm</h2>
-                <canvas id="gas-chart" width="400" height="200"></canvas>
-            </div>
+                <div class="form-row">
+                    <label for="name">Name</label>
+                    <p class="form-static">Luan Tran</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="luan@gmail.com" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" value="********" required />
+                </div>
+
+                <button type="submit" class="save-btn">Save</button>
+            </form>
         </div>
     </div>
-
-    <!-- JS script -->
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 
 </html>

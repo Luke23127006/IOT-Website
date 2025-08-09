@@ -1,10 +1,8 @@
 # app/__init__.py
 import os
 from flask import Flask
-from flask_pymongo import PyMongo
 from dotenv import load_dotenv
-
-mongo = PyMongo()
+from app.extensions import mongo
 
 def create_app():
     # Load biến môi trường từ .env
@@ -25,7 +23,9 @@ def create_app():
     mongo.init_app(app)
 
     # Import và đăng ký blueprint
-    from app.routes import main
+    from app.routes.routes import main
+    from app.routes.auth_route import auth
     app.register_blueprint(main)
+    app.register_blueprint(auth)
 
     return app
