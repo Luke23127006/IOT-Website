@@ -28,9 +28,9 @@ def create_app():
     mongo.init_app(app)
     mqtt.init_app(app)
 
-    TOPIC_BUZZER_ST = "/unique/buzzer_state"
+    TOPIC_BUZZER_ST = "/unique/buzzer"
 
-    def on_buzzer_state(topic, payload: str):
+    def on_buzzer(topic, payload: str):
         s = payload.strip().upper()
         if s not in ("ON", "OFF"):
             return
@@ -44,7 +44,7 @@ def create_app():
                                     {"$set": {"sound": (s == "ON"),
                                             }})
 
-    mqtt.subscribe(TOPIC_BUZZER_ST, on_buzzer_state)
+    mqtt.subscribe(TOPIC_BUZZER_ST, on_buzzer)
     
     # ===== Register blueprints =====
     from app.routes.routes import main
