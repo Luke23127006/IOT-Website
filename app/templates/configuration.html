@@ -17,7 +17,7 @@
         <div class="container">
             <h1 class="page-title">Configuration</h1>
 
-            <form class="page-form" method="POST" action="{{ url_for('main.configuration') }}">
+            <div class="page-form">
                 <!-- Title already above -->
 
                 <!-- Device ID (readonly) -->
@@ -28,51 +28,52 @@
                 </div>
 
                 <!-- Name -->
-                <div class="form-row">
+                <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" placeholder="Name"
                         value="{{ device.device_name if device else '' }}">
-                </div>
+                </form>
 
                 <!-- Warning Threshold -->
-                <div class="form-row">
+                <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
                     <label for="warn">Warning Threshold</label>
                     <div class="with-unit">
                         <input type="number" id="warn" name="warning_threshold" step="1" min="0" placeholder="Number"
                             value="{{ device.warning_threshold if device else '' }}">
                         <span class="unit">pm</span>
                     </div>
-                </div>
+                </form>
 
                 <!-- Danger Threshold -->
-                <div class="form-row">
+                <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
                     <label for="danger">Danger Threshold</label>
                     <div class="with-unit">
                         <input type="number" id="danger" name="danger_threshold" step="1" min="0" placeholder="Number"
                             value="{{ device.danger_threshold if device else '' }}">
                         <span class="unit">pm</span>
                     </div>
-                </div>
+                </form>
 
                 <!-- Sound -->
-                <div class="form-row">
+                <form class="form-row" method="POST"
+                    action="{{ url_for('main.configuration_sound', device_id=device.device_id) }}">
                     <label for="sound">Sound</label>
                     <label class="switch">
                         <input type="checkbox" id="sound" name="sound" {% if device and device.sound %}checked{% endif
-                            %}>
+                            %} onchange="this.form.submit()">
                         <span class="slider"></span>
                     </label>
-                </div>
+                </form>
 
                 <!-- Yellow LED -->
-                <div class="form-row">
+                <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
                     <label for="yellow_led">Yellow LED</label>
                     <label class="switch">
                         <input type="checkbox" id="yellow_led" name="yellow_led" {% if device and device.yellow_led
                             %}checked{% endif %}>
                         <span class="slider"></span>
                     </label>
-                </div>
+                </form>
 
                 <!-- Red LED -->
                 <div class="form-row">
@@ -83,11 +84,9 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-
-                <button type="submit" class="save-btn">Save</button>
-            </form>
+            </div>
         </div>
-    </div>
+        <script src="{{ url_for('static', filename='js/configuration.js') }}"></script>
 </body>
 
 </html>

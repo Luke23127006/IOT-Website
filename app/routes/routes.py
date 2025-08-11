@@ -1,11 +1,19 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, session, jsonify
 from app import mongo
 from bson import ObjectId
 from ..utils.decorators import login_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from app.services.mqtt_service import mqtt
 
 
 main = Blueprint("main", __name__)
+
+@main.route("/api/mqtt/ping")
+@login_required
+def mqtt_ping():
+    cmd = mqtt.last_cmd
+    mqtt.last_cmd = None   # đọc xong thì xóa, tránh redirect lặp
+    return jsonify({"cmd": cmd or ""})
 
 @main.route("/")
 def index():
@@ -29,6 +37,7 @@ def dashboard():
 @login_required
 def account():
     user = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])})
+    
     if request.method == "POST":
         new_username = request.form.get("username", "").strip()
         new_email = request.form.get("email", "").strip()
@@ -75,10 +84,41 @@ def account():
 def alert_history():
     return render_template("alert_history.html")
 
+from app.models.device import get_device_by_user_id
 @main.route("/configuration", methods=["GET"])
 @login_required
-def configuration():    
-    return render_template("configuration.html")
+def configuration():
+    try:
+        uid = ObjectId(session["user_id"])
+    except Exception:
+        abort(401)  # phiên đăng nhập lỗi
+
+    device = get_device_by_user_id(uid)
+    if not device:
+        flash("Your account currently does not own any devices.", "warning")
+        return render_template("configuration.html", device=None)
+
+    return render_template("configuration.html", device=device)
+
+@main.route("/configuration/sound", methods=["POST"])
+@login_required
+def configuration_sound():
+    uid = ObjectId(session["user_id"])
+    device = get_device_by_user_id(uid)
+    if not device:
+        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        return redirect(url_for("main.configuration"))
+
+    sound_on = (request.form.get("sound") == "on")
+
+    # update database
+    mongo.db.devices.update_one({"_id": device["_id"]}, {"$set": {"sound": sound_on}})
+
+    # 2) (Tuỳ chọn) Publish MQTT để thiết bị thực thi ngay
+    mqtt.publish("/unique/buzzer", "ON" if sound_on else "OFF")
+
+    flash(f"Sound setting updated: {'ON' if sound_on else 'OFF'}.", "success")
+    return redirect(url_for("main.configuration"))
 
 @main.route("/analysis", methods=["GET"])
 @login_required

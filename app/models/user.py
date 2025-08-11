@@ -1,8 +1,14 @@
 from bson import ObjectId
-from ..extensions import mongo
+from ..services.mongo_service import mongo
 
 def _coll():
     return mongo.db.users
+
+def get_user_id_by_email(email: str):
+    user = _coll().find_one({"email": email})
+    if user:
+        return str(user["_id"])
+    return None
 
 def get_user_by_username(username: str):
     return _coll().find_one({"username": username})

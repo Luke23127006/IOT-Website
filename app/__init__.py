@@ -1,31 +1,55 @@
 # app/__init__.py
+import json
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from app.extensions import mongo
-from app.models import device as device_model
+
+from app.services.mongo_service import mongo
+from app.services.mqtt_service import mqtt
+
+mqtt.last_cmd = None   
 
 def create_app():
-    # Load biến môi trường từ .env
     load_dotenv()
 
-    base_dir = os.path.abspath(os.path.dirname(__file__))
-
     app = Flask(__name__,
-                template_folder=os.path.join(base_dir, "templates"),
-                static_folder=os.path.join(base_dir, "static"))
-    
+                template_folder=os.path.join(os.path.dirname(__file__), "templates"),
+                static_folder=os.path.join(os.path.dirname(__file__), "static"))
+
     app.secret_key = os.getenv("SECRET_KEY")
 
-    # Cấu hình MongoDB URI từ file .env
-    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-    # Khởi tạo kết nối MongoDB
-    mongo.init_app(app)
+    # ===== Config từ .env =====
+    app.config["MONGO_URI"]          = os.getenv("MONGO_URI")
+    app.config["MQTT_BROKER_URL"]    = os.getenv("MQTT_BROKER_URL", "localhost")
+    app.config["MQTT_BROKER_PORT"]   = int(os.getenv("MQTT_BROKER_PORT", "1883"))
+    app.config["MQTT_TOPIC_CONFIG"]  = os.getenv("MQTT_TOPIC", "/unique/config")
 
-    # Import và đăng ký blueprint
+    # ===== Init services =====
+    mongo.init_app(app)
+    mqtt.init_app(app)
+
+    TOPIC_BUZZER_ST = "/unique/buzzer_state"
+
+    def on_buzzer_state(topic, payload: str):
+        s = payload.strip().upper()
+        if s not in ("ON", "OFF"):
+            return
+
+        # cache để debug (tuỳ thích)
+        mqtt.buzzer_state = s
+
+        # --- cập nhật MongoDB ---
+        # Cách 1: nếu bạn có device_id cố định (khuyên dùng)
+        mongo.db.devices.update_one({"device_id": "ESP32-001"},
+                                    {"$set": {"sound": (s == "ON"),
+                                            }})
+
+    mqtt.subscribe(TOPIC_BUZZER_ST, on_buzzer_state)
+    
+    # ===== Register blueprints =====
     from app.routes.routes import main
     from app.routes.auth_route import auth
     app.register_blueprint(main)
     app.register_blueprint(auth)
-
+    
     return app
