@@ -49,7 +49,9 @@ def create_app():
     # ===== Register blueprints =====
     from app.routes.routes import main
     from app.routes.auth_route import auth
+    from app.routes.chatbot_route import chatbot_bp
     app.register_blueprint(main)
     app.register_blueprint(auth)
+    app.register_blueprint(chatbot_bp)
     
     return app

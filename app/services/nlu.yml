@@ -11,6 +11,11 @@ nlu:
     examples: |
       - Nồng độ khí gas hiện tại là bao nhiêu
       - Tình trạng nơi đặt cảm biến
+      - Nồng độ khí gas hiện tại
+      - Nồng độ hiện tại
+      - Trạng thái khí gas hiện tại
+      - Trạng thái hiện tại
+      - Tình trạng hiện tại
 
   - intent: alert_details
     examples: |
@@ -31,7 +36,7 @@ nlu:
       - Có nên đặt gần bếp ga không
       - Tránh đặt ở vị trí nào
       - Gợi ý lắp ở [phòng khách](location)
-      - Hướng dẫn 
+      - Hướng dẫn
 
   - intent: sensor_information
     examples: |
@@ -40,5 +45,3 @@ nlu:
       - Danh sách cảm biến vượt ngưỡng
       - Cảm biến nào mất kết nối
       - Tình trạng các phòng
-  
-

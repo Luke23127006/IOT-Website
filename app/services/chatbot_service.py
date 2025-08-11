@@ -1,7 +1,7 @@
 import os, re, yaml
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
-from app.models.device import get_ppm_value_by_device_id
+from ..models.device import get_ppm_value_by_device_id
 
 # Optional: LLM fallback
 try:
@@ -84,26 +84,25 @@ def llm_fallback(user_text: str) -> str:
 def chatbot_reply(user_text: str) -> str:
     if is_emergency(user_text):
         return EMERGENCY_RESPONSE
-    intents = load_nlu("nlu.yml")
-    responses = load_responses("domain.yml")
-    if intent == "device_status":
-        ppm_val = get_ppm_value_by_device_id("ESP32-001")
-        responses["utter_device_status"] = [{"text": f"Nồng độ khí gas hiện tại: {ppm_val} ppm."}]
-
+    intents = load_nlu("app/services/nlu.yml")
+    responses = load_responses("app/services/domain.yml")
+    
     intent = match_intent(user_text, intents)
     resp = get_response(intent, responses)
+    print(f"Usertext: {user_text} Detected intent: {intent}, response: {resp}")
     if intent == "device_status":
+        print("Fetching device status...")
         ppm_val = get_ppm_value_by_device_id("ESP32-001")
-        responses["utter_device_status"] = [{"text": f"Nồng độ khí gas hiện tại: {ppm_val} ppm."}]
+        return f"Nồng độ khí gas hiện tại: {ppm_val} ppm." if ppm_val is not None else "Không tìm thấy thông tin thiết bị."
     if resp:
         return resp
     return "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."
 
 # --------- CLI test ---------
-if __name__ == "__main__":
-    while True:
-        msg = input("Bạn: ")
-        if msg.lower() in ["exit", "quit"]:
-            break
+# if __name__ == "__main__":
+#     while True:
+#         msg = input("Bạn: ")
+#         if msg.lower() in ["exit", "quit"]:
+#             break
         
-        print("Bot:", chatbot_reply(msg))
+#         print("Bot:", chatbot_reply(msg))

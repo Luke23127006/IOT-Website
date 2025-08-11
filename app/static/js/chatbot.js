@@ -21,16 +21,45 @@ document.addEventListener('mousedown', (e) => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeChat(); });
 
 // Demo chat behavior
-form?.addEventListener('submit', (e) => {
+// form?.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//     const text = (input.value || '').trim();
+//     if (!text) return;
+//     bodyEl.insertAdjacentHTML('beforeend', `<div class="bubble user"></div>`);
+//     bodyEl.lastElementChild.textContent = text;
+//     input.value = ''; bodyEl.scrollTop = bodyEl.scrollHeight;
+//     setTimeout(() => {
+//         bodyEl.insertAdjacentHTML('beforeend', `<div class="bubble bot"></div>`);
+//         bodyEl.lastElementChild.textContent = `You said: ${text}`;
+//         bodyEl.scrollTop = bodyEl.scrollHeight;
+//     }, 450);
+// });
+
+form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const text = (input.value || '').trim();
     if (!text) return;
+
+    // append bubble user
     bodyEl.insertAdjacentHTML('beforeend', `<div class="bubble user"></div>`);
     bodyEl.lastElementChild.textContent = text;
-    input.value = ''; bodyEl.scrollTop = bodyEl.scrollHeight;
-    setTimeout(() => {
+    input.value = '';
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+
+    try {
+        const res = await fetch('/api/chatbot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        const reply = data.reply || data.error || 'Có lỗi xảy ra.';
         bodyEl.insertAdjacentHTML('beforeend', `<div class="bubble bot"></div>`);
-        bodyEl.lastElementChild.textContent = `You said: ${text}`;
+        bodyEl.lastElementChild.textContent = reply;
+    } catch (err) {
+        bodyEl.insertAdjacentHTML('beforeend', `<div class="bubble bot"></div>`);
+        bodyEl.lastElementChild.textContent = 'Không kết nối được máy chủ.';
+    } finally {
         bodyEl.scrollTop = bodyEl.scrollHeight;
-    }, 450);
+    }
 });
