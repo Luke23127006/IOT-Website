@@ -19,8 +19,8 @@ def create_device(device_id: str, device_name: str, user_id: str | ObjectId):
         "warning_threshold": 180,
         "danger_threshold": 200,
         "sound": True,
-        "yellow_led": True,
-        "red_led": True,
+        "yellowled": True,
+        "redled": True,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
     }

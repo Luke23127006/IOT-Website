@@ -4,7 +4,7 @@ from bson import ObjectId
 from ..utils.decorators import login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.services.mqtt_service import mqtt
-
+from ..config import MQTT_TOPIC
 
 main = Blueprint("main", __name__)
 
@@ -115,9 +115,49 @@ def configuration_sound():
     mongo.db.devices.update_one({"_id": device["_id"]}, {"$set": {"sound": sound_on}})
 
     # 2) (Tuỳ chọn) Publish MQTT để thiết bị thực thi ngay
-    mqtt.publish("/unique/buzzer", "ON" if sound_on else "OFF")
+    mqtt.publish(MQTT_TOPIC + "/buzzer", "ON" if sound_on else "OFF")
 
     flash(f"Sound setting updated: {'ON' if sound_on else 'OFF'}.", "success")
+    return redirect(url_for("main.configuration"))
+
+@main.route("/configuration/yellowled", methods=["POST"])
+@login_required
+def configuration_yellowled():
+    uid = ObjectId(session["user_id"])
+    device = get_device_by_user_id(uid)
+    if not device:
+        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        return redirect(url_for("main.configuration"))
+
+    yellowled_on = (request.form.get("yellowled") == "on")
+
+    # update database
+    mongo.db.devices.update_one({"_id": device["_id"]}, {"$set": {"yellowled": yellowled_on}})
+
+    # 2) (Tuỳ chọn) Publish MQTT để thiết bị thực thi ngay
+    mqtt.publish(MQTT_TOPIC + "/yellowled", "ON" if yellowled_on else "OFF")
+
+    flash(f"Yellow led setting updated: {'ON' if yellowled_on else 'OFF'}.", "success")
+    return redirect(url_for("main.configuration"))
+
+@main.route("/configuration/redled", methods=["POST"])
+@login_required
+def configuration_redled():
+    uid = ObjectId(session["user_id"])
+    device = get_device_by_user_id(uid)
+    if not device:
+        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        return redirect(url_for("main.configuration"))
+
+    redled_on = (request.form.get("redled") == "on")
+
+    # update database
+    mongo.db.devices.update_one({"_id": device["_id"]}, {"$set": {"redled": redled_on}})
+
+    # 2) (Tuỳ chọn) Publish MQTT để thiết bị thực thi ngay
+    mqtt.publish(MQTT_TOPIC + "/redled", "ON" if redled_on else "OFF")
+
+    flash(f"Red led setting updated: {'ON' if redled_on else 'OFF'}.", "success")
     return redirect(url_for("main.configuration"))
 
 @main.route("/analysis", methods=["GET"])

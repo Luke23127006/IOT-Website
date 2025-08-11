@@ -1,7 +1,7 @@
 import os, re, yaml
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
-from ..models.device import get_ppm_value_by_device_id
+from ..models.mq2_data import get_latest_point
 
 # Optional: LLM fallback
 try:
@@ -92,7 +92,7 @@ def chatbot_reply(user_text: str) -> str:
     print(f"Usertext: {user_text} Detected intent: {intent}, response: {resp}")
     if intent == "device_status":
         print("Fetching device status...")
-        ppm_val = get_ppm_value_by_device_id("ESP32-001")
+        ppm_val = get_latest_point().get("ppm")
         return f"Nồng độ khí gas hiện tại: {ppm_val} ppm." if ppm_val is not None else "Không tìm thấy thông tin thiết bị."
     if resp:
         return resp

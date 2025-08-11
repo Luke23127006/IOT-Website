@@ -66,24 +66,26 @@
                 </form>
 
                 <!-- Yellow LED -->
-                <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
-                    <label for="yellow_led">Yellow LED</label>
+                <form class="form-row" method="POST"
+                    action="{{ url_for('main.configuration_yellowled', device_id=device.device_id) }}">
+                    <label for="yellowled">Yellow LED</label>
                     <label class="switch">
-                        <input type="checkbox" id="yellow_led" name="yellow_led" {% if device and device.yellow_led
-                            %}checked{% endif %}>
-                        <span class="slider"></span>
+                        <input type="checkbox" id="yellowled" name="yellowled" {% if device and device.yellowled
+                            %}checked{% endif %} onchange="this.form.submit()">
+                        <span class=" slider"></span>
                     </label>
                 </form>
 
                 <!-- Red LED -->
-                <div class="form-row">
-                    <label for="red_led">Red LED</label>
+                <form class="form-row" method="POST"
+                    action="{{ url_for('main.configuration_redled', device_id=device.device_id) }}">
+                    <label for="redled">Red LED</label>
                     <label class="switch">
-                        <input type="checkbox" id="red_led" name="red_led" {% if device and device.red_led %}checked{%
-                            endif %}>
-                        <span class="slider"></span>
+                        <input type="checkbox" id="redled" name="redled" {% if device and device.redled %}checked{%
+                            endif %} onchange="this.form.submit()">
+                        <span class=" slider"></span>
                     </label>
-                </div>
+                </form>
             </div>
         </div>
         <script src="{{ url_for('static', filename='js/configuration.js') }}"></script>

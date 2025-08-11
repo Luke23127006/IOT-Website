@@ -1,5 +1,9 @@
+// dashboard.js
 const gasValueSpan = document.getElementById("gas-value");
 const ctx = document.getElementById("gas-chart").getContext("2d");
+
+const MAX_POINTS = 10; // tối đa điểm hiển thị
+let lastTs = null;
 
 const gasChart = new Chart(ctx, {
     type: 'line',
@@ -11,32 +15,73 @@ const gasChart = new Chart(ctx, {
             borderColor: 'red',
             borderWidth: 2,
             tension: 0.35,
-            pointRadius: 3,
+            pointRadius: 2,
             fill: false
         }]
     },
     options: {
         responsive: true,
+        animation: false,
         scales: {
-            x: { display: true },
+            x: { display: true, ticks: { autoSkip: true, maxTicksLimit: 6 } },
             y: { beginAtZero: true }
+        },
+        plugins: {
+            legend: { display: true }
         }
     }
 });
 
-// Fake data simulation
-setInterval(() => {
-    const gasValue = Math.floor(Math.random() * 500);
-    gasValueSpan.textContent = gasValue;
+function seedChart(labels, values) {
+    gasChart.data.labels = labels;
+    gasChart.data.datasets[0].data = values;
+    gasChart.update();
+    if (values.length) gasValueSpan.textContent = values[values.length - 1];
+}
 
-    const now = new Date().toLocaleTimeString();
-    gasChart.data.labels.push(now);
-    gasChart.data.datasets[0].data.push(gasValue);
+async function fetchHistory() {
+    try {
+        const res = await fetch('/api/mq2/history?limit=10');
+        const data = await res.json();
+        seedChart(data.labels || [], data.ppm || []);
+        lastTs = data.lastTs || null;
+    } catch (e) {
+        console.warn('fetchHistory error', e);
+    }
+}
 
-    if (gasChart.data.labels.length > 10) {
+function appendPoint(label, value) {
+    gasChart.data.labels.push(label);
+    gasChart.data.datasets[0].data.push(value);
+
+    // cắt đuôi nếu quá dài
+    if (gasChart.data.labels.length > MAX_POINTS) {
         gasChart.data.labels.shift();
         gasChart.data.datasets[0].data.shift();
     }
-
     gasChart.update();
-}, 2000);
+
+    gasValueSpan.textContent = value;
+}
+
+async function pollLatest() {
+    try {
+        const res = await fetch('/api/mq2/latest');
+        const doc = await res.json();
+        if (!doc || !doc.ts) return;
+
+        if (!lastTs || doc.ts > lastTs) {
+            const label = `${doc.time || ''} ${doc.date || ''}`.trim() || new Date(doc.ts).toLocaleTimeString();
+            appendPoint(label, doc.ppm ?? 0);
+            lastTs = doc.ts;
+        }
+    } catch (e) {
+        console.warn('pollLatest error', e);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchHistory();
+
+    setInterval(pollLatest, 2000);
+});
