@@ -1,0 +1,19 @@
+version: "3.1"
+responses:
+  utter_emergency_guidance:
+    - text: "⚠️ An toàn trước tiên: (1) Mở cửa/thoáng khí; (2) Không bật/tắt điện, không dùng lửa; (3) Rời khỏi khu vực; (4) Gọi 114."
+
+  utter_device_status:
+    - text: ""
+
+  utter_alert_details:
+    - text: "Đèn đỏ = nguy hiểm, Đèn vàng = cảnh báo."
+
+  utter_false_alarm:
+    - text: "Báo động giả: {is_false_alarm}. Nếu không có mùi, có thể do cảm biến nhạy. Nhưng để đảm bảo an toàn, vui lòng mở cửa sổ và tra lại."
+
+  utter_install_placement:
+    - text: "Gợi ý lắp đặt cảm biến: (1) Đặt ở nơi thoáng khí; (2) Treo cao ít nhất 1.5m; (3) Tránh gần bếp ga."
+
+  utter_sensor_information:
+    - text: "Thông tin cảm biến: MQ-2."

@@ -1,0 +1,44 @@
+version: "3.1"
+nlu:
+  - intent: emergency_guidance
+    examples: |
+      - Ngửi thấy mùi gas
+      - Còi đang kêu inh ỏi
+      - Rò rỉ gas rồi
+      - Có mùi khí gas
+
+  - intent: device_status
+    examples: |
+      - Nồng độ khí gas hiện tại là bao nhiêu
+      - Tình trạng nơi đặt cảm biến
+
+  - intent: alert_details
+    examples: |
+      - Vì sao đèn đỏ chớp
+      - Mức cảnh báo là gì
+      - Đèn vàng nghĩa là sao
+
+  - intent: false_alarm
+    examples: |
+      - Có phải báo động giả không
+      - Sao cứ kêu hoài dù không mùi
+      - Có mùi gas nhưng không có báo động
+
+  - intent: install_placement
+    examples: |
+      - Đặt cảm biến ở đâu là chuẩn
+      - Treo cao bao nhiêu mét
+      - Có nên đặt gần bếp ga không
+      - Tránh đặt ở vị trí nào
+      - Gợi ý lắp ở [phòng khách](location)
+      - Hướng dẫn 
+
+  - intent: sensor_information
+    examples: |
+      - Tổng quan tất cả cảm biến
+      - Có thiết bị nào đang báo động không
+      - Danh sách cảm biến vượt ngưỡng
+      - Cảm biến nào mất kết nối
+      - Tình trạng các phòng
+  
+
