@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from app.services.mongo_service import mongo
 from app.services.mqtt_service import mqtt
 
+from app.models.mq2_data import create_mq2_data
+
 mqtt.last_cmd = None   
 
 def create_app():
@@ -29,6 +31,13 @@ def create_app():
     mqtt.init_app(app)
 
     TOPIC_BUZZER_ST = "/unique/buzzer"
+    TOPIC_MQ2 = "/unique/mq2"
+    TOPIC_BUTTON = "/unique/button"
+
+    def on_mq2(topic, payload: str):
+        data = json.loads(payload)
+        create_mq2_data(**data)
+        print("Get data MQ2:", data)
 
     def on_buzzer(topic, payload: str):
         s = payload.strip().upper()
@@ -44,6 +53,7 @@ def create_app():
                                     {"$set": {"sound": (s == "ON"),
                                             }})
 
+    mqtt.subscribe(TOPIC_MQ2, on_mq2)
     mqtt.subscribe(TOPIC_BUZZER_ST, on_buzzer)
     
     # ===== Register blueprints =====
