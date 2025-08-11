@@ -45,3 +45,20 @@ nlu:
       - Danh sách cảm biến vượt ngưỡng
       - Cảm biến nào mất kết nối
       - Tình trạng các phòng
+  
+  - intent: greet
+    examples: |
+      - Chào
+      - Xin chào
+      - Hello
+      - Hi
+      - Hey
+      - What's up?
+      - Bạn khỏe không?
+      - Có gì mới không?
+      - Bắt đầu
+      - Khởi động
+      - Mở đầu
+      - Đi vào vấn đề
+
+  
