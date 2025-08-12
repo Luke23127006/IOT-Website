@@ -12,7 +12,7 @@ from app.services.mail_service import send_alert
 
 from app.models.mq2_data import create_mq2_data, _coll as mq2_coll
 from app.models.off_all_request import create_off_all_request_data
-from app.models.user import get_all_users
+from app.models.user import get_all_emails
 
 mqtt.last_cmd = None
 _last_email_sent: dict[str, int] = {}  
