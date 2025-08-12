@@ -84,29 +84,26 @@ def create_app():
                 if entering_danger and cool_ok:
                     _last_email_sent[device_id] = now
                     try:
-                        users = get_all_users()
+                        emails = get_all_emails()
                     except Exception as e:
-                        app.logger.error(f"get_all_users() failed: {e}")
-                        users = []
+                        app.logger.error(f"get_all_emails() failed: {e}")
+                        emails = []
 
-                    emails = [u.get("email") for u in users if u.get("email")]
-
-                    if emails:
-                        subject = f"[ALERT] GAS DANGER — {data.get('ppm')} ppm"
-                        html = f"""
-                            <h2>GAS DANGER detected</h2>
-                            <ul>
-                            <li>PPM: {data.get('ppm')}</li>
-                            <li>Level: {level}</li>
-                            <li>Time: {data.get('date')} {data.get('time')}</li>
-                            <li>TS: {ts}</li>
-                            </ul>
-                        """
-                        for email in emails:
-                            try:
-                                send_alert(subject, html, [email])
-                            except Exception as e:
-                                app.logger.error(f"Send mail to {email} failed: {e}")
+                    subject = f"[ALERT] GAS DANGER — {data.get('ppm')} ppm"
+                    html = f"""
+                        <h2>GAS DANGER detected</h2>
+                        <ul>
+                        <li>PPM: {data.get('ppm')}</li>
+                        <li>Level: {level}</li>
+                        <li>Time: {data.get('date')} {data.get('time')}</li>
+                        <li>TS: {ts}</li>
+                        </ul>
+                    """
+                    for email in emails:
+                        try:
+                            send_alert(subject, html, [email])
+                        except Exception as e:
+                            app.logger.error(f"Send mail to {email} failed: {e}")
 
     def on_button(topic, payload: str):
         with app.app_context():
