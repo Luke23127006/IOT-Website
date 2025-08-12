@@ -10,3 +10,4 @@ dnspython==2.4.2
 langchain 
 langchain-openai 
 python-dotenv
+flask_mail
