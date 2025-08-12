@@ -8,6 +8,7 @@ from app.services.mongo_service import mongo
 from app.services.mqtt_service import mqtt
 
 from app.models.mq2_data import create_mq2_data
+from app.models.off_all_request import create_off_all_request_data
 
 mqtt.last_cmd = None   
 
@@ -39,25 +40,30 @@ def create_app():
     def on_mq2(topic, payload: str):
         data = json.loads(payload)
         create_mq2_data(**data)
+
+    def on_button(topic, pyaload: str):
+        data = json.loads(pyaload)
+        create_off_all_request_data(**data)
         
-    def on_buzzer(topic, payload: str):
-        s = payload.strip().upper()
-        if s not in ("ON", "OFF"):
-            return
+    # def on_buzzer(topic, payload: str):
+    #     s = payload.strip().upper()
+    #     if s not in ("ON", "OFF"):
+    #         return
 
-        # cache để debug (tuỳ thích)
-        mqtt.buzzer_state = s
+    #     # cache để debug (tuỳ thích)
+    #     mqtt.buzzer_state = s
 
-        # --- cập nhật MongoDB ---
-        # Cách 1: nếu bạn có device_id cố định (khuyên dùng)
-        mongo.db.devices.update_one({"device_id": "ESP32-001"},
-                                    {"$set": {"sound": (s == "ON"),
-                                            }})
+    #     # --- cập nhật MongoDB ---
+    #     # Cách 1: nếu bạn có device_id cố định (khuyên dùng)
+    #     mongo.db.devices.update_one({"device_id": "ESP32-001"},
+    #                                 {"$set": {"sound": (s == "ON"),
+    #                                         }})
 
     mqtt.subscribe(TOPIC_MQ2, on_mq2)
-    mqtt.subscribe(TOPIC_BUZZER, on_buzzer)
-    mqtt.subscribe(TOPIC_YELLOWLED, on_buzzer)
-    mqtt.subscribe(TOPIC_REDLED, on_buzzer)
+    mqtt.subscribe(TOPIC_BUTTON, on_button)
+    # mqtt.subscribe(TOPIC_BUZZER, on_buzzer)
+    # mqtt.subscribe(TOPIC_YELLOWLED, on_buzzer)
+    # mqtt.subscribe(TOPIC_REDLED, on_buzzer)
     
     # from app.models.device import create_device
     # from app.models.user import get_user_id_by_email
