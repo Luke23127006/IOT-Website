@@ -8,10 +8,11 @@ from dotenv import load_dotenv
 from app.services.mongo_service import mongo
 from app.services.mqtt_service import mqtt
 from app.services.mail_service import mail
+from app.services.mail_service import send_alert
 
 from app.models.mq2_data import create_mq2_data, _coll as mq2_coll
 from app.models.off_all_request import create_off_all_request_data
-from app.services.mail_service import send_alert
+from app.models.user import get_all_users
 
 mqtt.last_cmd = None
 _last_email_sent: dict[str, int] = {}  
@@ -82,8 +83,15 @@ def create_app():
 
                 if entering_danger and cool_ok:
                     _last_email_sent[device_id] = now
-                    recipients = [e.strip() for e in app.config.get("ALERT_TO", "").split(",") if e.strip()]
-                    if recipients:
+                    try:
+                        users = get_all_users()
+                    except Exception as e:
+                        app.logger.error(f"get_all_users() failed: {e}")
+                        users = []
+
+                    emails = [u.get("email") for u in users if u.get("email")]
+
+                    if emails:
                         subject = f"[ALERT] GAS DANGER — {data.get('ppm')} ppm"
                         html = f"""
                             <h2>GAS DANGER detected</h2>
@@ -94,7 +102,11 @@ def create_app():
                             <li>TS: {ts}</li>
                             </ul>
                         """
-                        send_alert(subject, html, recipients)
+                        for email in emails:
+                            try:
+                                send_alert(subject, html, [email])
+                            except Exception as e:
+                                app.logger.error(f"Send mail to {email} failed: {e}")
 
     def on_button(topic, payload: str):
         with app.app_context():
