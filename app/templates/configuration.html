@@ -14,6 +14,7 @@
     <div class="main-content">
         {% include "components/flash_popup.html" %}
         {% include "components/chatbot.html" %}
+        {% include "components/alert.html" %}
         <div class="container">
             <h1 class="page-title">Configuration</h1>
 
@@ -89,6 +90,7 @@
             </div>
         </div>
         <script src="{{ url_for('static', filename='js/configuration.js') }}"></script>
+        <script defer src="{{ url_for('static', filename='js/offall_alert.js') }}"></script>
 </body>
 
 </html>

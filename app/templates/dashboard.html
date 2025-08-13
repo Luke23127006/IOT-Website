@@ -16,6 +16,7 @@
     <div class="main-content">
         {% include "components/flash_popup.html" %}
         {% include "components/chatbot.html" %}
+        {% include "components/alert.html" %}
         <div class="container">
             <h1 class="page-title">Dashboard</h1>
 
@@ -28,6 +29,7 @@
 
     <!-- JS script -->
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/offall_alert.js') }}"></script>
 </body>
 
 </html>

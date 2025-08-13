@@ -160,6 +160,28 @@ def configuration_redled():
     flash(f"Red led setting updated: {'ON' if redled_on else 'OFF'}.", "success")
     return redirect(url_for("main.configuration"))
 
+@main.route("/configuration/off_all_alert/confirm", methods=["POST"])
+@login_required
+def off_all_alert_confirm():
+    uid = ObjectId(session["user_id"])
+    device = get_device_by_user_id(uid)
+    if not device:
+        return jsonify({"ok": False, "error": "No device"}), 400
+
+    # 1) Cập nhật DB
+    mongo.db.devices.update_one(
+        {"_id": device["_id"]},
+        {"$set": {"sound": False, "yellowled": False, "redled": False}}
+    )
+
+    return jsonify({"ok": True})
+
+@main.route("/configuration/off_all_alert/cancel", methods=["POST"])
+@login_required
+def off_all_alert_cancel():
+    # Không làm gì, chỉ để client biết là đã hủy
+    return jsonify({"ok": True})
+
 @main.route("/analysis", methods=["GET"])
 @login_required
 def analysis():

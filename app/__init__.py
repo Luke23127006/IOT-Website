@@ -106,13 +106,27 @@ def create_app():
                             app.logger.error(f"Send mail to {email} failed: {e}")
 
     def on_button(topic, payload: str):
+        """
+        ESP32 gửi: { "request": "OFF_ALL", "ts": 1699999999, "device_id": "ESP32-001" }
+        hoặc payload="OFF_ALL" cũng được.
+        """
         with app.app_context():
+            device_id = "ESP32-001"
+            ts = int(time.time())
             try:
-                data = json.loads(payload)
-            except Exception as e:
-                return
-        
-            create_off_all_request_data(**data)
+                data = json.loads(payload) if payload and payload.strip().startswith("{") else {}
+                device_id = data.get("device_id", device_id)
+                ts = int(data.get("ts", ts))
+            except Exception:
+                pass
+
+            # ✅ CHỈ phát tín hiệu lên front-end thông qua "hàng đợi" tạm (polling)
+            # app đã có /api/mqtt/ping dùng mqtt.last_cmd
+            mqtt.last_cmd = {
+                "kind": "OFF_ALL_REQUEST",
+                "device_id": device_id,
+                "ts": ts
+            }
 
     # def on_buzzer(topic, payload: str):
     #     s = payload.strip().upper()
@@ -146,5 +160,6 @@ def create_app():
         mqtt.init_app(app)
         mqtt.subscribe(TOPIC_MQ2, on_mq2)
         mqtt.subscribe(TOPIC_BUTTON, on_button)
+        # mqtt.message_callback_add(TOPIC_BUTTON, on_button)
     
     return app

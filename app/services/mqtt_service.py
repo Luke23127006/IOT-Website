@@ -16,6 +16,7 @@ class MQTTService:
         self._connected = False
         self._host = "localhost"
         self._port = 1883
+        self.last_cmd = None  # Lưu lệnh cuối cùng nhận được từ MQTT
 
     def init_app(self, app):
         self._host = app.config.get("MQTT_BROKER_URL", "localhost")
@@ -70,6 +71,12 @@ class MQTTService:
         self._handlers.setdefault(topic, []).append(handler)
         if self.client and self._connected:
             self.client.subscribe(topic)
+            
+    def message_callback_add(self, topic: str, handler):
+        """Thêm callback cho topic, sẽ được gọi khi có tin nhắn mới"""
+        if self.client is None:
+            raise RuntimeError("MQTTService not initialized")
+        self.client.message_callback_add(topic, handler)
 
 # singleton
 mqtt = MQTTService()

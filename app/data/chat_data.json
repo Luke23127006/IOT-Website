@@ -27,6 +27,14 @@
     {
       "role": "bot",
       "text": "Nồng độ khí gas hiện tại: 790.0 ppm."
+    },
+    {
+      "role": "user",
+      "text": "alo alo"
+    },
+    {
+      "role": "bot",
+      "text": "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."
     }
   ]
 }
