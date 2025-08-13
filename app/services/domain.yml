@@ -20,4 +20,6 @@ responses:
 
   utter_greet:
     - text: "Chào bạn! Tôi là trợ lý ảo của bạn. Tôi có thể giúp gì cho bạn hôm nay? Bạn có thể hỏi về tình trạng cảm biến, hướng dẫn lắp đặt, hoặc các vấn đề liên quan đến khí gas."
-    
+
+  utter_predict:
+    - text: "Dự đoán nồng độ khí gas trong 10 ngày tới: {prediction}."

@@ -94,6 +94,9 @@ def chatbot_reply(user_text: str) -> str:
         print("Fetching device status...")
         ppm_val = get_latest_point().get("ppm")
         return f"Nồng độ khí gas hiện tại: {ppm_val} ppm." if ppm_val is not None else "Không tìm thấy thông tin thiết bị."
+    elif intent == "predict":
+        #dự đoán
+        pass
     if resp:
         return resp
     return "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."

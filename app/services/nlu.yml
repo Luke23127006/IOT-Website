@@ -61,4 +61,18 @@ nlu:
       - Mở đầu
       - Đi vào vấn đề
 
-  
+  - intent: predict
+    examples: |
+      - Dự đoán nồng độ khí gas 
+      - Tình hình khí gas sẽ ra sao 
+      - Dự báo nồng độ khí gas
+      - Nồng độ khí gas dự kiến
+      - Dự đoán
+      - Dự báo
+      - Thời gian sắp tới sẽ như thế nào
+      - Dự đoán trong tương lai
+      - Xác suất
+      - Khả năng 
+      - Xác suất đèn đỏ
+      - Xác suất đèn vàng
+      
