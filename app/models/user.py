@@ -30,3 +30,6 @@ def update_username(user_id, new_username):
 
 def update_email(user_id, new_email):
     return _coll().update_one({"_id": ObjectId(user_id)}, {"$set": {"email": new_email}})
+
+def get_all_emails():
+    return [u["email"] for u in _coll().find({"email": {"$ne": None}}, {"email": 1, "_id": 0})]

@@ -11,3 +11,4 @@ langchain
 langchain-openai 
 python-dotenv
 numpy
+flask_mail
