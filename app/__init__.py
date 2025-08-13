@@ -68,6 +68,15 @@ def create_app():
             level = (data.get("level") or "").upper()
 
             if level == "DANGER":
+                mongo.db.device.update_one(
+                    {"device_id": device_id},
+                    {"$set": {
+                        "sound": True,
+                        "yellowled": True,
+                        "redled": True,
+                    }}
+                )
+                
                 # Rising-edge: previous record not DANGER
                 prev = mq2_coll().find_one(
                     {"device_id": device_id, "ts": {"$lt": ts}},
