@@ -67,8 +67,8 @@ def create_app():
             ts = int(data.get("ts", 0))
             level = (data.get("level") or "").upper()
 
-            if level == "DANGER":
-                mongo.db.device.update_one(
+            if level == 'DANGER':
+                mongo.db.devices.update_one(
                     {"device_id": device_id},
                     {"$set": {
                         "sound": True,
@@ -159,7 +159,7 @@ def create_app():
     from app.routes.routes import main
     from app.routes.auth_route import auth
     from app.routes.chatbot_route import chatbot_bp
-    from app.routes.dashboard_route import mq2_api
+    from app.routes.mq2_route import mq2_api
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(chatbot_bp)

@@ -12,7 +12,15 @@ const MAX_HISTORY_RENDER = 200; // phòng trường hợp file lớn
 function addBubble(role, text) {
     const el = document.createElement('div');
     el.className = `bubble ${role}`;
-    el.textContent = text;
+
+    if (role === 'bot') {
+        // Render Markdown -> HTML
+        el.innerHTML = marked.parse(text);
+    } else {
+        // Tin nhắn người dùng giữ nguyên text
+        el.textContent = text;
+    }
+
     bodyEl.appendChild(el);
     bodyEl.scrollTop = bodyEl.scrollHeight;
 }

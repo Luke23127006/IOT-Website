@@ -1,7 +1,8 @@
 import os, re, yaml
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
-from ..models.mq2_data import get_latest_point
+from ..models.mq2_data import get_latest_point, get_latest_ppm
+from .predict import predict_ppm_interval
 
 # Optional: LLM fallback
 try:
@@ -95,8 +96,21 @@ def chatbot_reply(user_text: str) -> str:
         ppm_val = get_latest_point().get("ppm")
         return f"Nồng độ khí gas hiện tại: {ppm_val} ppm." if ppm_val is not None else "Không tìm thấy thông tin thiết bị."
     elif intent == "predict":
-        #dự đoán
-        pass
+        ppm_val = get_latest_ppm(limit=30)
+        intervals = predict_ppm_interval(ppm_val, horizon=12)
+
+        # Tạo bảng Markdown
+        lines = []
+        lines.append("| Bước dự báo | Min (ppm) | Max (ppm) | Ngưỡng vàng | Ngưỡng đỏ |")
+        lines.append("|-------------|-----------|-----------|-------------|-----------|")
+        for i, (lo, hi, p_y, p_r) in enumerate(intervals, start=1):
+            lines.append(
+                f"| {i} | {lo:.1f} | {hi:.1f} | {p_y*100:.1f}% | {p_r*100:.1f}% |"
+            )
+
+        response = "### Dự đoán nồng độ khí gas trong 2 phút tới\n" + "\n".join(lines)
+        return response
+        
     if resp:
         return resp
     return "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."

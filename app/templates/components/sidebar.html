@@ -6,6 +6,9 @@
         <li class="{% if request.endpoint == 'main.dashboard' %}active{% endif %}">
             <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
         </li>
+        <li class="{% if request.endpoint == 'main.alert_history' %}active{% endif %}">
+            <a href="{{ url_for('main.alert_history') }}">Alert History</a>
+        </li>
         <li class="{% if request.endpoint == 'main.configuration' %}active{% endif %}">
             <a href="{{ url_for('main.configuration') }}">Configuration</a>
         </li>

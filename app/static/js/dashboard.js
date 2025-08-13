@@ -1,9 +1,11 @@
-// dashboard.js
 const gasValueSpan = document.getElementById("gas-value");
 const ctx = document.getElementById("gas-chart").getContext("2d");
 
-const MAX_POINTS = 10; // tối đa điểm hiển thị
+const MAX_POINTS = 10;
 let lastTs = null;
+
+const WARNING_THRESHOLD = 400;
+const DANGER_THRESHOLD = 500;
 
 const gasChart = new Chart(ctx, {
     type: 'line',
@@ -26,42 +28,81 @@ const gasChart = new Chart(ctx, {
             x: { display: true, ticks: { autoSkip: true, maxTicksLimit: 6 } },
             y: { beginAtZero: true }
         },
-        plugins: {
-            legend: { display: true }
-        }
+        plugins: { legend: { display: true } }
     }
 });
+
+const gasLevelSpan = document.getElementById("gas-level");
+
+function updateLevel(value) {
+    const v = Number(value) || 0;
+    if (v >= DANGER_THRESHOLD) {
+        gasLevelSpan.textContent = "Level: DANGER";
+        gasLevelSpan.style.color = "red";
+    } else if (v >= WARNING_THRESHOLD) {
+        gasLevelSpan.textContent = "Level: WARNING";
+        gasLevelSpan.style.color = "orange";
+    } else {
+        gasLevelSpan.textContent = "Level: NORMAL";
+        gasLevelSpan.style.color = "green";
+    }
+}
 
 function seedChart(labels, values) {
     gasChart.data.labels = labels;
     gasChart.data.datasets[0].data = values;
     gasChart.update();
-    if (values.length) gasValueSpan.textContent = values[values.length - 1];
+    if (values.length) {
+        const latest = Number(values[values.length - 1]) || 0;
+        gasValueSpan.textContent = latest;
+        updateLevel(latest);
+    }
 }
 
 async function fetchHistory() {
     try {
         const res = await fetch('/api/mq2/history?limit=10');
         const data = await res.json();
-        seedChart(data.labels || [], data.ppm || []);
+        const ppmArr = Array.isArray(data.ppm) ? data.ppm.map(x => Number(x) || 0) : [];
+        seedChart(data.labels || [], ppmArr);
         lastTs = data.lastTs || null;
+        if (!ppmArr.length) updateLevel(0);
     } catch (e) {
         console.warn('fetchHistory error', e);
     }
 }
 
-function appendPoint(label, value) {
-    gasChart.data.labels.push(label);
-    gasChart.data.datasets[0].data.push(value);
+// ====== Prediction Chart cập nhật ở đây ======
+async function loadPrediction() {
+    try {
+        const res = await fetch('/api/mq2/predict?horizon=10');
+        const data = await res.json();
+        if (predChart) {
+            predChart.data.labels = data.labels || [];
+            predChart.data.datasets[0].data = data.mid || [];
+            predChart.update();
+        }
+    } catch (err) {
+        console.warn('predict fetch error', err);
+    }
+}
 
-    // cắt đuôi nếu quá dài
+function appendPoint(label, value) {
+    const v = Number(value) || 0;
+    gasChart.data.labels.push(label);
+    gasChart.data.datasets[0].data.push(v);
+
     if (gasChart.data.labels.length > MAX_POINTS) {
         gasChart.data.labels.shift();
         gasChart.data.datasets[0].data.shift();
     }
     gasChart.update();
 
-    gasValueSpan.textContent = value;
+    gasValueSpan.textContent = v;
+    updateLevel(v);
+
+    // Mỗi lần có điểm mới -> update prediction chart
+    loadPrediction();
 }
 
 async function pollLatest() {
@@ -72,7 +113,8 @@ async function pollLatest() {
 
         if (!lastTs || doc.ts > lastTs) {
             const label = `${doc.time || ''} ${doc.date || ''}`.trim() || new Date(doc.ts).toLocaleTimeString();
-            appendPoint(label, doc.ppm ?? 0);
+            const v = Number(doc.ppm);
+            appendPoint(label, Number.isFinite(v) ? v : 0);
             lastTs = doc.ts;
         }
     } catch (e) {
@@ -82,6 +124,5 @@ async function pollLatest() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchHistory();
-
     setInterval(pollLatest, 2000);
 });

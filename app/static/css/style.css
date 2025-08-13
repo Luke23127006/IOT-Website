@@ -560,7 +560,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   position: fixed;
   right: 24px;
   bottom: 92px; /* sits above the FAB */
-  width: 340px;
+  width: 430px;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
@@ -720,4 +720,89 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .btn-secondary {
   background: #ddd;
   color: #222;
+}
+
+.bubble.bot table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 6px 0;
+}
+.bubble.bot table,
+.bubble.bot th,
+.bubble.bot td {
+  border: 1px solid #ccc;
+}
+.bubble.bot th,
+.bubble.bot td {
+  padding: 4px 8px;
+  text-align: left;
+}
+.bubble.bot code {
+  background: #f6f8fa;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+.filter-bar input[type="date"] {
+  padding: 8px 10px;
+  border: 1px solid #cdd6e1;
+  border-radius: 8px;
+  background: #eaf1fb;
+}
+
+/* Table */
+.table-wrap {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table thead th {
+  background: #eef3fa;
+  font-weight: 700;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #dfe7f3;
+}
+.table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f4fa;
+}
+.table tbody tr:hover {
+  background: #f8fbff;
+}
+
+#gas-level {
+  float: right;
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.btn-primary {
+  background-color: #3d5afe;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 20px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 8px;
+  text-decoration-line: none;
+}
+
+.btn-primary:hover {
+  background-color: #2a43cc;
 }

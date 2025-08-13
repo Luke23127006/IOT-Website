@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Alert History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    {% include "components/sidebar.html" %}
+
+    <div class="main-content">
+        {% include "components/flash_popup.html" %}
+        {% include "components/chatbot.html" %}
+        {% include "components/alert.html" %}
+
+        <div class="container">
+            <h1 class="page-title">Alert History</h1>
+
+            <form class="filter-bar" method="get" action="{{ url_for('main.alert_history') }}">
+                <label>From</label>
+                <input type="date" name="from" value="{{ from_date or '' }}" />
+                <label>to</label>
+                <input type="date" name="to" value="{{ to_date or '' }}" />
+                <button class="btn-primary" type="submit">Filter</button>
+
+                <!-- Reset: link GET về route lọc, xóa query -->
+                <a class="btn-primary" href="{{ url_for('main.alert_history') }}">Reset</a>
+
+                <!-- Export: link GET tới export, giữ nguyên from/to hiện tại -->
+                <a class="btn-primary" href="{{ url_for('main.alert_history_export',
+          **({'from': from_date, 'to': to_date} if from_date or to_date else {})) }}">
+                    Export CSV
+                </a>
+            </form>
+
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Concentration</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if rows %}
+                        {% for r in rows %}
+                        <tr>
+                            <td>{{ r.date }}</td>
+                            <td>{{ r.time }}</td>
+                            <td>{{ '%.0f'|format(r.ppm) }} ppm</td>
+                            <td>{{ r.level|title }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align:center;color:#666;">No data</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

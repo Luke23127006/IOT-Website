@@ -45,7 +45,7 @@ nlu:
       - Danh sách cảm biến vượt ngưỡng
       - Cảm biến nào mất kết nối
       - Tình trạng các phòng
-  
+
   - intent: greet
     examples: |
       - Chào
@@ -72,7 +72,4 @@ nlu:
       - Thời gian sắp tới sẽ như thế nào
       - Dự đoán trong tương lai
       - Xác suất
-      - Khả năng 
-      - Xác suất đèn đỏ
-      - Xác suất đèn vàng
-      
+      - Khả năng

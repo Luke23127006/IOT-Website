@@ -1,4 +1,5 @@
 # app/models/mq2_data.py
+from typing import Sequence
 from pymongo import DESCENDING
 from app.services.mongo_service import mongo
 
@@ -51,3 +52,10 @@ def get_latest_point(device_id: str = "ESP32-001"):
     doc = (_coll()
            .find_one({"device_id": device_id}, {"_id": 0}, sort=[("ts", DESCENDING)]))
     return doc
+
+def get_latest_ppm(device_id="ESP32-001", limit=10)->Sequence[float]:
+    """
+    Trả về danh sách ppm mới nhất của device_id.
+    """
+    docs = get_latest_mq2_data(device_id, limit)
+    return [doc.get("ppm", 0) for doc in docs]

@@ -32,7 +32,7 @@
                 <form class="form-row" method="POST" action="{{ url_for('main.configuration') }}">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" placeholder="Name"
-                        value="{{ device.device_name if device else '' }}">
+                        value="{{ device.device_name if device else '' }}" readonly>
                 </form>
 
                 <!-- Warning Threshold -->
@@ -40,7 +40,7 @@
                     <label for="warn">Warning Threshold</label>
                     <div class="with-unit">
                         <input type="number" id="warn" name="warning_threshold" step="1" min="0" placeholder="Number"
-                            value="{{ device.warning_threshold if device else '' }}">
+                            value="{{ device.warning_threshold if device else '' }}" readonly>
                         <span class="unit">pm</span>
                     </div>
                 </form>
@@ -50,7 +50,7 @@
                     <label for="danger">Danger Threshold</label>
                     <div class="with-unit">
                         <input type="number" id="danger" name="danger_threshold" step="1" min="0" placeholder="Number"
-                            value="{{ device.danger_threshold if device else '' }}">
+                            value="{{ device.danger_threshold if device else '' }}" readonly>
                         <span class="unit">pm</span>
                     </div>
                 </form>

@@ -18,28 +18,16 @@
         <div class="container">
             <h1 class="page-title">Analysis & Prediction</h1>
 
-            <div class="page-grid">
-                <!-- LEFT: insights + chart -->
-                <section class="insights">
-                    <h3 class="section-title">Prediction Result</h3>
-                    <p class="muted">
-                        It is predicted that the gas concentration will rise significantly at <b>4:00 PM</b> today.
-                    </p>
-
-                    <h3 class="section-title">Risk Level</h3>
-                    <p class="risk-high">❗ High <span class="muted">(over 200 ppm within the next 2 hours)</span></p>
-
-                    <h3 class="section-title">Prediction Chart</h3>
-                    <div class="card">
-                        <canvas id="pred-chart" height="220"></canvas>
-                    </div>
-                </section>
+            <div class="status">
+                <h2 class="section-title">Prediction Chart</h2>
+                <canvas id="pred-chart" width="400" height="200"></canvas>
             </div>
         </div>
     </div>
 
     <!-- JS script -->
-    <script src=" {{ url_for('static', filename='js/analysis.js' ) }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
 
     </script>
     <script defer src="{{ url_for('static', filename='js/offall_alert.js') }}"></script>

@@ -1,4 +1,7 @@
-from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, session, jsonify
+import csv
+from datetime import datetime, timezone, timedelta
+from io import BytesIO, StringIO
+from flask import Blueprint, abort, render_template, request, redirect, send_file, url_for, flash, session, jsonify
 from app import mongo
 from bson import ObjectId
 from ..utils.decorators import login_required
@@ -7,6 +10,59 @@ from app.services.mqtt_service import mqtt
 from ..config import MQTT_TOPIC
 
 main = Blueprint("main", __name__)
+
+TZ = timezone(timedelta(hours=7))  # nếu dữ liệu ts theo UTC+7, chỉnh cho khớp
+
+def _parse_date_yyyy_mm_dd(s: str):
+    """Nhận 'YYYY-MM-DD' (từ input type=date). Trả datetime (naive) tại 00:00."""
+    return datetime.strptime(s, "%Y-%m-%d")
+
+def _date_range_to_ts_ms(from_date_str, to_date_str):
+    """
+    Chuyển khoảng [from, to] ngày -> [start_ms, end_ms] theo mốc 00:00..23:59:59.999
+    Giả định from/to là local date (UTC+7). Điều chỉnh theo dữ liệu thực tế của bạn.
+    """
+    if not from_date_str and not to_date_str:
+        return None, None
+
+    if from_date_str:
+        d0 = _parse_date_yyyy_mm_dd(from_date_str)
+    else:
+        # nếu không có from -> rất xa
+        d0 = datetime(1970, 1, 1)
+
+    if to_date_str:
+        d1 = _parse_date_yyyy_mm_dd(to_date_str)
+    else:
+        # nếu không có to -> hôm nay
+        d1 = datetime.now()
+
+    # Khoảng trong ngày [00:00, 23:59:59.999]
+    start_dt = datetime(d0.year, d0.month, d0.day, 0, 0, 0)
+    end_dt   = datetime(d1.year, d1.month, d1.day, 23, 59, 59, 999000)
+
+    # Nếu ts của bạn là epoch ms theo UTC hoặc UTC+7?
+    # - Nếu ESP32 đóng dấu UTC: dùng .replace(tzinfo=timezone.utc)
+    # - Nếu bạn coi date theo local (UTC+7) thì offset về UTC trước khi lấy epoch.
+    # Ở đây mình giả định local +7 rồi chuyển về UTC khi tính epoch:
+    start_ms = int((start_dt.replace(tzinfo=TZ)).timestamp() * 1000)
+    end_ms   = int((end_dt.replace(tzinfo=TZ)).timestamp() * 1000)
+
+    return start_ms, end_ms
+
+def _build_query(device_id, from_date, to_date, only_alert=False):
+    q = {"device_id": device_id}
+    if only_alert:
+        q["level"] = {"$in": ["DANGER"]}
+
+    if from_date and to_date:
+        q["date"] = {"$gte": from_date, "$lte": to_date}  # ISO date so sánh theo chuỗi OK
+    elif from_date:
+        q["date"] = {"$gte": from_date}
+    elif to_date:
+        q["date"] = {"$lte": to_date}
+
+    return q
 
 @main.route("/api/mqtt/ping")
 @login_required
@@ -82,7 +138,62 @@ def account():
 @main.route("/alert_history", methods=["GET"])
 @login_required
 def alert_history():
-    return render_template("alert_history.html")
+    from_date = (request.args.get("from") or "").strip()
+    to_date   = (request.args.get("to") or "").strip()
+    device_id = "ESP32-001"
+
+    q = _build_query(device_id, from_date, to_date, only_alert=True)
+
+    cur = (mongo.db.mq2_data
+           .find(q, {"_id": 0})
+           .sort([("date", -1), ("time", -1)])   # thay vì sort("ts", -1)
+           .limit(500))
+
+    rows = []
+    for d in cur:
+        rows.append({
+            "date": d.get("date", ""),
+            "time": d.get("time", ""),
+            "ppm":  d.get("ppm", 0),
+            "level": d.get("level", "NORMAL"),
+        })
+
+    return render_template("alert_history.html",
+                           rows=rows,
+                           from_date=from_date,
+                           to_date=to_date)
+
+@main.route("/alert_history_export", methods=["GET"])
+@login_required
+def alert_history_export():
+    from_date = (request.args.get("from") or "").strip()
+    to_date   = (request.args.get("to") or "").strip()
+    device_id = "ESP32-001"
+
+    q = _build_query(device_id, from_date, to_date, only_alert=True)
+    cur = (mongo.db.mq2_data
+           .find(q, {"_id": 0})
+           .sort("ts", -1)
+           .limit(5000))
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Date", "Time", "Concentration(ppm)", "State"])
+
+    for d in cur:
+        ts_ms = int(d.get("ts", 0) or 0)
+        if 0 < ts_ms < 10**12:
+            ts_ms *= 1000
+        dt = datetime.fromtimestamp(ts_ms/1000, tz=TZ) if ts_ms else None
+        date_str = d.get("date") or (dt.strftime("%Y-%m-%d") if dt else "")
+        time_str = d.get("time") or (dt.strftime("%H:%M") if dt else "")
+        writer.writerow([date_str, time_str, d.get("ppm", 0), d.get("level", "")])
+
+    mem = BytesIO(output.getvalue().encode("utf-8"))
+    mem.seek(0)
+    return send_file(mem, as_attachment=True,
+                     download_name="alert_history.csv",
+                     mimetype="text/csv")
 
 from app.models.device import get_device_by_user_id
 @main.route("/configuration", methods=["GET"])
@@ -106,7 +217,7 @@ def configuration_sound():
     uid = ObjectId(session["user_id"])
     device = get_device_by_user_id(uid)
     if not device:
-        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
 
     sound_on = (request.form.get("sound") == "on")
@@ -126,7 +237,7 @@ def configuration_yellowled():
     uid = ObjectId(session["user_id"])
     device = get_device_by_user_id(uid)
     if not device:
-        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
 
     yellowled_on = (request.form.get("yellowled") == "on")
@@ -146,7 +257,7 @@ def configuration_redled():
     uid = ObjectId(session["user_id"])
     device = get_device_by_user_id(uid)
     if not device:
-        flash("Tài khoản của bạn hiện chưa sở hữu thiết bị nào.", "warning")
+        flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
 
     redled_on = (request.form.get("redled") == "on")
