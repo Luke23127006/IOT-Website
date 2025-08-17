@@ -11,6 +11,7 @@ from app.services.mail_service import mail
 from app.services.mail_service import send_alert
 
 from app.models.mq2_data import create_mq2_data, _coll as mq2_coll
+from app.models.dht import create_dht_data
 from app.models.off_all_request import create_off_all_request_data
 from app.models.user import get_all_emails
 
@@ -53,6 +54,7 @@ def create_app():
     TOPIC_REDLED = "/23127006_23127179_23127189/redled"
     TOPIC_MQ2 = "/23127006_23127179_23127189/mq2"
     TOPIC_BUTTON = "/23127006_23127179_23127189/button"
+    TOPIC_DHT = "/23127006_23127179_23127189/dht"
 
     def on_mq2(topic, payload: str):
         with app.app_context():
@@ -137,6 +139,18 @@ def create_app():
                 "ts": ts
             }
 
+    def on_dht(topic, payload: str):
+        """
+        ESP32 gửi: { "temp": 25.5, "date": "2023-11-01", "time": "12:00:00", "ts": 1699999999, "device_id": "ESP32-001" }
+        """
+        with app.app_context():
+            try:
+                data = json.loads(payload)
+            except Exception:
+                return
+            
+            create_dht_data(**data)
+
     # def on_buzzer(topic, payload: str):
     #     s = payload.strip().upper()
     #     if s not in ("ON", "OFF"):
@@ -169,6 +183,7 @@ def create_app():
         mqtt.init_app(app)
         mqtt.subscribe(TOPIC_MQ2, on_mq2)
         mqtt.subscribe(TOPIC_BUTTON, on_button)
+        mqtt.subscribe(TOPIC_DHT, on_dht)
         # mqtt.message_callback_add(TOPIC_BUTTON, on_button)
     
     return app
