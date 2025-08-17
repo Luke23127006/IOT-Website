@@ -1,4 +1,5 @@
 const gasValueSpan = document.getElementById("gas-value");
+const tempValueSpan = document.getElementById("dht-temp");
 const ctx = document.getElementById("gas-chart").getContext("2d");
 
 const MAX_POINTS = 10;
@@ -122,7 +123,26 @@ async function pollLatest() {
     }
 }
 
+async function pollLatestTemp() {
+  try {
+    const res = await fetch("/api/dht/latest");
+    if (!res.ok) return;
+    const doc = await res.json();
+    const t = Number(doc?.temp);
+    if (Number.isFinite(t)) {
+      tempValueSpan.textContent = t.toFixed(1);
+    } else {
+      tempValueSpan.textContent = "--";
+    }
+  } catch (e) {
+    console.warn("pollLatestTemp error", e);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchHistory();
     setInterval(pollLatest, 2000);
+
+    await pollLatestTemp();         // gọi ngay 1 lần để hiện nhanh
+    setInterval(pollLatestTemp, 2000);
 });
