@@ -175,11 +175,13 @@ def create_app():
     from app.routes.chatbot_route import chatbot_bp
     from app.routes.mq2_route import mq2_api
     from app.routes.dht_route import dht_api
+    from app.routes.alert_route import alert_bp
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(chatbot_bp)
     app.register_blueprint(mq2_api)
     app.register_blueprint(dht_api)
+    app.register_blueprint(alert_bp)
 
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
         mqtt.init_app(app)

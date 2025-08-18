@@ -124,19 +124,19 @@ async function pollLatest() {
 }
 
 async function pollLatestTemp() {
-  try {
-    const res = await fetch("/api/dht/latest");
-    if (!res.ok) return;
-    const doc = await res.json();
-    const t = Number(doc?.temp);
-    if (Number.isFinite(t)) {
-      tempValueSpan.textContent = t.toFixed(1);
-    } else {
-      tempValueSpan.textContent = "--";
+    try {
+        const res = await fetch("/api/dht/latest");
+        if (!res.ok) return;
+        const doc = await res.json();
+        const t = Number(doc?.temp);
+        if (Number.isFinite(t)) {
+            tempValueSpan.textContent = t.toFixed(1);
+        } else {
+            tempValueSpan.textContent = "--";
+        }
+    } catch (e) {
+        console.warn("pollLatestTemp error", e);
     }
-  } catch (e) {
-    console.warn("pollLatestTemp error", e);
-  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

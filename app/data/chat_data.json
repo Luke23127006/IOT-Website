@@ -83,6 +83,38 @@
     {
       "role": "bot",
       "text": "Đèn đỏ = nguy hiểm, Đèn vàng = cảnh báo."
+    },
+    {
+      "role": "user",
+      "text": "gas bị rò rỉ rồi"
+    },
+    {
+      "role": "bot",
+      "text": "⚠️ **An toàn trước tiên**:\n1) Mở cửa/thoáng khí;\n2) **Không** bật/tắt điện, không dùng lửa;\n3) Rời khỏi khu vực;\n4) Gọi **114**."
+    },
+    {
+      "role": "user",
+      "text": "cứu"
+    },
+    {
+      "role": "bot",
+      "text": "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."
+    },
+    {
+      "role": "user",
+      "text": "cháy rồi"
+    },
+    {
+      "role": "bot",
+      "text": "Mình chưa hiểu ý bạn. Bạn có thể thử hỏi lại hoặc mô tả rõ hơn nhé."
+    },
+    {
+      "role": "user",
+      "text": "đự đoán"
+    },
+    {
+      "role": "bot",
+      "text": "### Dự đoán nồng độ khí gas trong 2 phút tới\n| Bước dự báo | Min (ppm) | Max (ppm) | Ngưỡng vàng | Ngưỡng đỏ |\n|-------------|-----------|-----------|-------------|-----------|\n| 1 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 2 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 3 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 4 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 5 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 6 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 7 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 8 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 9 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 10 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 11 | 248.8 | 248.8 | 0.0% | 0.0% |\n| 12 | 248.8 | 248.8 | 0.0% | 0.0% |"
     }
   ]
 }

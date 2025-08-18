@@ -50,7 +50,7 @@
         btnConfirm.disabled = true; btnCancel.disabled = true;
 
         try {
-            const res = await fetch("/configuration/off_all_alert/confirm", {
+            const res = await fetch("/api/alert/off_all_alert/confirm", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "same-origin",
@@ -79,7 +79,7 @@
         btnConfirm.disabled = true; btnCancel.disabled = true;
 
         try {
-            await fetch("/configuration/off_all_alert/cancel", {
+            await fetch("/api/alert/off_all_alert/cancel", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "same-origin",

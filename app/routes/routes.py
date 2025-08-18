@@ -195,7 +195,7 @@ def alert_history_export():
                      download_name="alert_history.csv",
                      mimetype="text/csv")
 
-from app.models.device import get_device_by_user_id
+from app.models.device import get_device_by_device_id, get_device_by_user_id
 @main.route("/configuration", methods=["GET"])
 @login_required
 def configuration():
@@ -204,7 +204,7 @@ def configuration():
     except Exception:
         abort(401)  # phiên đăng nhập lỗi
 
-    device = get_device_by_user_id(uid)
+    device = get_device_by_device_id("ESP32-001")
     if not device:
         flash("Your account currently does not own any devices.", "warning")
         return render_template("configuration.html", device=None)
@@ -214,8 +214,7 @@ def configuration():
 @main.route("/configuration/sound", methods=["POST"])
 @login_required
 def configuration_sound():
-    uid = ObjectId(session["user_id"])
-    device = get_device_by_user_id(uid)
+    device = get_device_by_device_id("ESP32-001")
     if not device:
         flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
@@ -235,7 +234,7 @@ def configuration_sound():
 @login_required
 def configuration_yellowled():
     uid = ObjectId(session["user_id"])
-    device = get_device_by_user_id(uid)
+    device = get_device_by_device_id("ESP32-001")
     if not device:
         flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
@@ -255,7 +254,7 @@ def configuration_yellowled():
 @login_required
 def configuration_redled():
     uid = ObjectId(session["user_id"])
-    device = get_device_by_user_id(uid)
+    device = get_device_by_device_id("ESP32-001")
     if not device:
         flash("Your account currently does not own any devices.", "warning")
         return redirect(url_for("main.configuration"))
@@ -270,28 +269,6 @@ def configuration_redled():
 
     flash(f"Red led setting updated: {'ON' if redled_on else 'OFF'}.", "success")
     return redirect(url_for("main.configuration"))
-
-@main.route("/configuration/off_all_alert/confirm", methods=["POST"])
-@login_required
-def off_all_alert_confirm():
-    uid = ObjectId(session["user_id"])
-    device = get_device_by_user_id(uid)
-    if not device:
-        return jsonify({"ok": False, "error": "No device"}), 400
-
-    # 1) Cập nhật DB
-    mongo.db.devices.update_one(
-        {"_id": device["_id"]},
-        {"$set": {"sound": False, "yellowled": False, "redled": False}}
-    )
-
-    return jsonify({"ok": True})
-
-@main.route("/configuration/off_all_alert/cancel", methods=["POST"])
-@login_required
-def off_all_alert_cancel():
-    # Không làm gì, chỉ để client biết là đã hủy
-    return jsonify({"ok": True})
 
 @main.route("/analysis", methods=["GET"])
 @login_required
